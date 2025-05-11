@@ -1,15 +1,17 @@
 import { Router, Request, Response } from "express";
-import { Task } from "../models/task";
+import { TaskDto } from "../models/task";
+import TaskRepo from "../repositories/taskrepo";
 
 const router = Router();
-let tasks: Task[] = [];
+const taskRepo = new TaskRepo();
 
-router.get('/', (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response) => {
+    const tasks = await taskRepo.getAllTasks();
     res.json(tasks);
 });
 
-router.get('/:id', (req: Request, res: Response) => {
-    const task = tasks.find((t) => t.id === parseInt(req.params.id));
+router.get('/:id', async (req: Request, res: Response) => {
+    const task = await taskRepo.getTaskById(parseInt(req.params.id));
 
     if (!task) {
         res.status(404).send('Task not found');
@@ -18,20 +20,25 @@ router.get('/:id', (req: Request, res: Response) => {
     }
 });
 
-router.post('/', (req: Request, res: Response) => {
-    const task: Task = {
-        id: tasks.length + 1,
+router.post('/', async (req: Request, res: Response) => {
+    const task: TaskDto = {
         title: req.body.title,
-        description: req.body.description,
-        completed: false
+        description: req.body.description
     };
-    tasks.push(task);
-    res.status(201).json(task);
+
+    const createdTask = await taskRepo.createTask(task);
+
+    res.status(201).json(createdTask);
 });
 
-router.delete('/:id', (req: Request, res: Response) => {
+router.delete('/:id', async (req: Request, res: Response) => {
     const taskId = parseInt(req.params.id);
-    tasks = tasks.filter(task => task.id !== taskId);
+    const succeeded = await taskRepo.deleteTask(taskId);
+
+    if (!succeeded) {
+        res.status(404).send('Task not found');
+    }
+
     res.status(204).send();
 });
 
