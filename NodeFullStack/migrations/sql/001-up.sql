@@ -3,7 +3,7 @@ CREATE TYPE task_status AS ENUM ('Pending', 'In Progress', 'Completed');
 
 -- Create the Tasks table
 CREATE TABLE IF NOT EXISTS Tasks (
-    TaskID SERIAL PRIMARY KEY,
+    Id SERIAL PRIMARY KEY,
     Title VARCHAR(255) NOT NULL,
     Description TEXT,
     Status task_status DEFAULT 'Pending',
