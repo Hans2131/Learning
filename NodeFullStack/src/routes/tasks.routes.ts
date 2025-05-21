@@ -22,6 +22,7 @@ router.get("/:id", async (req: Request, res: Response) => {
 
 router.post("/", async (req: Request, res: Response) => {
   const task: TaskDto = {
+    userId: req.currentUser!.id,
     title: req.body.title,
     description: req.body.description,
   };

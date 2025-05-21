@@ -14,8 +14,8 @@ export default class TaskRepo {
 
   async createTask(task: TaskDto): Promise<Task> {
     const result = await pool.query(
-      "INSERT INTO tasks (title, description) VALUES ($1, $2) RETURNING *",
-      [task.title, task.description],
+      "INSERT INTO tasks (userid, title, description) VALUES ($1, $2, $3) RETURNING *",
+      [task.userId, task.title, task.description],
     );
     return result.rows[0];
   }

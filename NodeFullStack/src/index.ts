@@ -2,9 +2,16 @@ import express, { NextFunction, Request, Response } from "express";
 import taskRoutes from "#routes/tasks.routes.js";
 import userRoutes from "#routes/user.routes.js";
 import authMiddleware from "#middlewares/auth.middleware.js";
+import fs from "fs";
+import https from "https";
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 443;
+const options = {
+  key: fs.readFileSync("certs/key.pem"),
+  cert: fs.readFileSync("certs/cert.pem"),
+};
+const httpsServer = https.createServer(options, app);
 
 app.use(express.json());
 
@@ -23,6 +30,7 @@ app.get("/error", () => {
 });
 
 app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
+  console.error(err.stack);
   res.status(500).json({ message: err.message ?? "Something went wrong" });
 });
 
@@ -30,6 +38,6 @@ app.use((req: Request, res: Response, _next: NextFunction) => {
   res.status(404).json({ message: "Sorry can't find that!" });
 });
 
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+httpsServer.listen(port, () => {
+  console.log(`Server running at https://localhost:${port}`);
 });

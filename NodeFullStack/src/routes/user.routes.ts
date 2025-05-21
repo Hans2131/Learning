@@ -6,7 +6,12 @@ import jwt from "jsonwebtoken";
 
 const router = Router();
 const userRepo = new UserRepo();
-const JWT_SECRET = process.env.JWT_SECRET ? process.env.JWT_SECRET : (() => { throw new Error("JWT_SECRET is not defined"); })();
+const JWT_SECRET = process.env.JWT_SECRET
+  ? process.env.JWT_SECRET
+  : (() => {
+      throw new Error("JWT_SECRET is not defined");
+    })();
+const JWT_EXPIRATION = parseInt(process.env.JWT_EXPIRATION ?? "3600");
 
 // POST /api/auth/register
 router.post("/register", async (req: Request, res: Response) => {
@@ -55,10 +60,9 @@ router.post("/login", async (req: Request, res: Response) => {
     return;
   }
 
-  const token = jwt.sign(    { id: user.id, email: user.email },
-    JWT_SECRET,
-    { expiresIn: "1h" }
-  );
+  const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
+    expiresIn: JWT_EXPIRATION,
+  });
 
   res.status(200).json({ message: "Login successful", user, token });
 });

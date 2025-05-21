@@ -10,6 +10,7 @@ export interface Task extends TaskDto {
 }
 
 export interface TaskDto {
+  userId: number;
   description: string;
   title: string;
 }

@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import { UserPayload } from "#models/user.js";
 
 export default async function authMiddleware(
   req: Request,
@@ -23,8 +24,8 @@ export default async function authMiddleware(
         res.status(401).json({ message: "Token invalid" });
         return;
       }
-      req.body.user = decoded;
-      console.log(decoded);
+      req.currentUser = decoded as UserPayload;
+
       next();
     },
   );
