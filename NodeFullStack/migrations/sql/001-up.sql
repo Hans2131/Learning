@@ -1,3 +1,10 @@
+-- Create the Users table
+CREATE TABLE IF NOT EXISTS Users (
+    Id SERIAL PRIMARY KEY,
+    Email VARCHAR(255) NOT NULL UNIQUE,
+    Password VARCHAR(255) NOT NULL
+);
+
 -- Create an ENUM type for the Status column
 CREATE TYPE task_status AS ENUM ('Pending', 'In Progress', 'Completed');
 
@@ -10,4 +17,3 @@ CREATE TABLE IF NOT EXISTS Tasks (
     CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UpdatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-

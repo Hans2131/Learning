@@ -1,11 +1,16 @@
 import express, { NextFunction, Request, Response } from "express";
-import taskRoutes from "#routes/tasks.js";
+import taskRoutes from "#routes/tasks.routes.js";
+import userRoutes from "#routes/user.routes.js";
+import authMiddleware from "#middlewares/auth.middleware.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
+app.use("/user", userRoutes);
+
+app.use(authMiddleware);
 app.use("/tasks", taskRoutes);
 
 app.get("/", (req: Request, res: Response) => {

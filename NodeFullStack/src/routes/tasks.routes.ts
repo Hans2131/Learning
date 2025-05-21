@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 import { TaskDto } from "#models/task.js";
-import TaskRepo from "#repositories/taskrepo.js";
+import TaskRepo from "#repositories/task.repo.js";
 
 const router = Router();
 const taskRepo = new TaskRepo();
