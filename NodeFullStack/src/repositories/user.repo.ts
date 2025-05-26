@@ -9,6 +9,11 @@ export default class UserRepo {
     return result.rows.length > 0 ? result.rows[0] : null;
   }
 
+  async getUserById(id: number): Promise<User | null> {
+    const result = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
+    return result.rows.length > 0 ? result.rows[0] : null;
+  }
+
   async createUser(user: UserDto): Promise<User> {
     const result = await pool.query(
       "INSERT INTO users (email, password) VALUES ($1, $2) RETURNING *",

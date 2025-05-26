@@ -1,17 +1,38 @@
-import { Router, Request, Response } from "express";
+import { Router, Request, Response, NextFunction } from "express";
 import { UserDto } from "#models/user.js";
 import UserRepo from "#repositories/user.repo.js";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import passport from "passport";
+import { Strategy as LocalStrategy } from "passport-local";
 
 const router = Router();
 const userRepo = new UserRepo();
-const JWT_SECRET = process.env.JWT_SECRET
-  ? process.env.JWT_SECRET
-  : (() => {
-      throw new Error("JWT_SECRET is not defined");
-    })();
-const JWT_EXPIRATION = parseInt(process.env.JWT_EXPIRATION ?? "3600");
+
+passport.use(
+  new LocalStrategy(
+    { usernameField: "email" },
+    async (email, password, done) => {
+      const user = await userRepo.getUserByEmail(email);
+      if (!user) return done(null, false, { message: "Incorrect credentials" });
+
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch)
+        return done(null, false, { message: "Incorrect credentials" });
+
+      return done(null, user);
+    },
+  ),
+);
+
+// session support
+passport.serializeUser((user: Express.User, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser(async (id: number, done) => {
+  const user = await userRepo.getUserById(id);
+  done(null, user || false);
+});
 
 // POST /api/auth/register
 router.post("/register", async (req: Request, res: Response) => {
@@ -40,31 +61,29 @@ router.post("/register", async (req: Request, res: Response) => {
     .json({ message: "User registered successfully", user: newUser });
 });
 
-router.post("/login", async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+router.post(
+  "/login",
+  passport.authenticate("local"),
+  async (req: Request, res: Response) => {
+    const user = req.user;
+    res.status(200).json({ message: "Login successful", user });
+  },
+);
 
-  if (!email || !password) {
-    res.status(400).json({ message: "Email and password fields are required" });
-    return;
-  }
-
-  const user = await userRepo.getUserByEmail(email);
-  if (!user) {
-    res.status(401).json({ message: "Invalid credentials" });
-    return;
-  }
-
-  const isPasswordValid = await bcrypt.compare(password, user.password);
-  if (!isPasswordValid) {
-    res.status(401).json({ message: "Invalid credentials" });
-    return;
-  }
-
-  const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
-    expiresIn: JWT_EXPIRATION,
+router.post("/logout", (req, res, next) => {
+  req.logout((err) => {
+    if (err) return next(err);
+    res.json({ message: "Logged out" });
   });
-
-  res.status(200).json({ message: "Login successful", user, token });
 });
+
+export function isAuthenticated(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Response | void {
+  if (req.user) return next();
+  else res.redirect("/");
+}
 
 export default router;

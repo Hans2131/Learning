@@ -1,9 +1,15 @@
 import express, { NextFunction, Request, Response } from "express";
+import fs from "fs";
+import https from "https";
+import morgan from "morgan";
+import helmet from "helmet";
+import cors from "cors";
+import session from "express-session";
+import passport from "passport";
+
 import taskRoutes from "#routes/tasks.routes.js";
 import userRoutes from "#routes/user.routes.js";
 import authMiddleware from "#middlewares/auth.middleware.js";
-import fs from "fs";
-import https from "https";
 
 const app = express();
 const port = process.env.PORT || 443;
@@ -13,10 +19,37 @@ const options = {
 };
 const httpsServer = https.createServer(options, app);
 
+const COOKIE_SECRET =
+  process.env.COOKIE_SECRET ??
+  (() => {
+    throw new Error("COOKIE_SECRET is not defined");
+  })();
+
+const COOKIE_EXPIRATION = parseInt(
+  process.env.COOKIE_EXPIRATION ?? "86400000", // Default to 1 day in milliseconds
+);
+
 app.use(express.json());
+app.use(morgan("combined"));
+app.use(cors());
+app.use(helmet());
+
+app.use(
+  session({
+    secret: COOKIE_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: true, // Use true if using HTTPS
+      httpOnly: true,
+      maxAge: COOKIE_EXPIRATION ?? 24 * 60 * 60 * 1000, // 1 day
+    },
+  }),
+);
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use("/user", userRoutes);
-
 app.use(authMiddleware);
 app.use("/tasks", taskRoutes);
 
