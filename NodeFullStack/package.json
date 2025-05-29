@@ -1,59 +1,10 @@
 {
-  "name": "nodesetuptesting",
-  "version": "1.0.0",
-  "type": "module",
   "scripts": {
-    "dev": "tsx --watch --env-file .env src/index.ts",
-    "debug": "tsx --watch --inspect --env-file .env src/index.ts",
-    "start": "node --env-file .env dist/index.js",
-    "build": "tsc",
-    "type-check": "tsc --noEmit",
-    "lint": "eslint .",
-    "lint:fix": "eslint --fix .",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "migrate": "node-pg-migrate --env-file .env"
-  },
-  "imports": {
-    "#*": "./src/*"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "dependencies": {
-    "bcrypt": "^6.0.0",
-    "cors": "^2.8.5",
-    "express": "^5.1.0",
-    "express-session": "^1.18.1",
-    "helmet": "^8.1.0",
-    "jsonwebtoken": "^9.0.2",
-    "morgan": "^1.10.0",
-    "node-pg-migrate": "^7.9.1",
-    "passport": "^0.7.0",
-    "passport-local": "^1.0.0",
-    "pg": "^8.16.0"
+    "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
+    "start:frontend": "cd frontend && npm run dev",
+    "start:backend": "cd backend && npm run dev"
   },
   "devDependencies": {
-    "@eslint/js": "^9.26.0",
-    "@tsconfig/node22": "^22.0.1",
-    "@types/bcrypt": "^5.0.2",
-    "@types/cors": "^2.8.18",
-    "@types/express": "^5.0.1",
-    "@types/express-session": "^1.18.1",
-    "@types/helmet": "^0.0.48",
-    "@types/jsonwebtoken": "^9.0.9",
-    "@types/morgan": "^1.9.9",
-    "@types/node": "^22.15.18",
-    "@types/passport": "^1.0.17",
-    "@types/passport-local": "^1.0.38",
-    "@types/pg": "^8.15.2",
-    "dotenv": "^16.5.0",
-    "eslint": "^9.26.0",
-    "eslint-plugin-perfectionist": "^4.13.0",
-    "prettier": "^3.5.3",
-    "tsx": "^4.19.4",
-    "typescript": "^5.8.3",
-    "typescript-eslint": "^8.32.1"
+    "concurrently": "^9.1.2"
   }
 }
