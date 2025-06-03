@@ -1,6 +1,7 @@
 -- Create the Users table
 CREATE TABLE IF NOT EXISTS Users (
     Id SERIAL PRIMARY KEY,
+    Username VARCHAR(100) NOT NULL,
     Email VARCHAR(255) NOT NULL UNIQUE,
     Password VARCHAR(255) NOT NULL
 );

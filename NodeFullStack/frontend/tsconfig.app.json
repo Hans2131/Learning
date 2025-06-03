@@ -21,7 +21,13 @@
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+
+    "paths": {
+      "#/*": ["./src/*"],
+      "@shared/*": ["../shared/src/*"]
+    }
   },
-  "include": ["src", "postcss.config.cjs"]
+  "include": ["src", "postcss.config.cjs"],
+  "references": [{ "path": "../shared" }]
 }

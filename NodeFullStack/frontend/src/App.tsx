@@ -1,20 +1,9 @@
 import "./App.css";
 import "@mantine/core/styles.css";
-import { HeaderMegaMenu } from "./appshell/HeaderMegaMenu";
-
-import { AppShell, MantineProvider } from "@mantine/core";
+import AppContainer from "./containers/app.container";
 
 function App() {
-  return (
-    <MantineProvider>
-      <AppShell padding="md" header={{ height: 60 }}>
-        <AppShell.Header>
-          <HeaderMegaMenu />
-        </AppShell.Header>
-        <AppShell.Main></AppShell.Main>
-      </AppShell>
-    </MantineProvider>
-  );
+  return <AppContainer />;
 }
 
 export default App;

@@ -1,5 +1,6 @@
 import pool from "#utils/db.js";
-import { User, UserDto } from "#models/user.js";
+import { User } from "#models/user.js";
+import { UserDto } from "@shared/models/user.js";
 
 export default class UserRepo {
   async getUserByEmail(email: string): Promise<User | null> {
@@ -16,8 +17,8 @@ export default class UserRepo {
 
   async createUser(user: UserDto): Promise<User> {
     const result = await pool.query(
-      "INSERT INTO users (email, password) VALUES ($1, $2) RETURNING *",
-      [user.email, user.password],
+      "INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING *",
+      [user.username, user.email, user.password],
     );
     return result.rows[0];
   }

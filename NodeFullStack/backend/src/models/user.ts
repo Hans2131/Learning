@@ -1,10 +1,7 @@
+import { UserDto } from "@shared/models/user.js";
+
 export interface User extends UserDto {
   id: number;
-}
-
-export interface UserDto {
-  email: string;
-  password: string;
 }
 
 export interface UserPayload {

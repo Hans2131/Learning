@@ -1,13 +1,15 @@
 {
   "extends": "@tsconfig/node22/tsconfig.json",
   "compilerOptions": {
+    "composite": true,
     "outDir": "./dist",
-    "rootDir": "./"
+    "rootDir": "./",
+    "paths": {
+      "@shared/*": ["../shared/src/*"],
+      "#*": ["./src/*"]
+    }
   },
-  "include": [
-    "**/*.ts"
-  ],
-  "exclude": [
-    "dist"
-  ]
+  "include": ["**/*.ts"],
+  "exclude": ["dist"],
+  "references": [{ "path": "../shared" }]
 }

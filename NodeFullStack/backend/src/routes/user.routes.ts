@@ -1,5 +1,5 @@
 import { Router, Request, Response, NextFunction } from "express";
-import { UserDto } from "#models/user.js";
+import { UserDto } from "@shared/models/user.js";
 import UserRepo from "#repositories/user.repo.js";
 import bcrypt from "bcrypt";
 import passport from "passport";
@@ -36,29 +36,30 @@ passport.deserializeUser(async (id: number, done) => {
 
 // POST /api/auth/register
 router.post("/register", async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+  const newUser = req.body as UserDto;
 
-  if (!email || !password) {
+  if (!newUser.email || !newUser.password || !newUser.username) {
     res.status(400).json({ message: "All fields are required" });
     return;
   }
 
-  const existingUser = await userRepo.getUserByEmail(email);
+  const existingUser = await userRepo.getUserByEmail(newUser.email);
   if (existingUser) {
     res.status(409).json({ message: "User already exists" });
     return;
   }
 
   const user: UserDto = {
-    email,
-    password: await bcrypt.hash(password, 10), // Hash the password before saving
+    email: newUser.email,
+    password: await bcrypt.hash(newUser.password, 10), // Hash the password before saving
+    username: newUser.username,
   };
 
-  const newUser = await userRepo.createUser(user);
+  const createdUser = await userRepo.createUser(user);
 
   res
     .status(201)
-    .json({ message: "User registered successfully", user: newUser });
+    .json({ message: "User registered successfully", user: createdUser });
 });
 
 router.post(

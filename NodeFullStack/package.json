@@ -1,10 +1,14 @@
 {
-  "scripts": {
-    "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
-    "start:frontend": "cd frontend && npm run dev",
-    "start:backend": "cd backend && npm run dev"
-  },
-  "devDependencies": {
-    "concurrently": "^9.1.2"
-  }
+  "files": [],
+  "references": [
+    {
+      "path": "./shared"
+    },
+    {
+      "path": "./backend"
+    },
+    {
+      "path": "./frontend"
+    }
+  ]
 }
